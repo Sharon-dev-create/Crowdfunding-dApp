@@ -72,7 +72,7 @@ contract Crowdfunding {
         for(uint i = 0; i < numberOfCampaigns; i++ ){
             Campaign storage item = campaigns[i];
 
-            allCampaigns[i] = item;
+            allCampaigns[i] = item;   
         }
         return(allCampaigns);
     }
