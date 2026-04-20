@@ -31,7 +31,7 @@ contract Crowdfunding {
     ) public returns (uint256) {
         Campaign storage campaign = campaigns[numberOfCampaigns];
 
-        require(campaign.deadline < block.timestamp, "The deadline should be a date in the future.");
+        require(_deadline > block.timestamp, "The deadline should be a date in the future.");
 
         campaign.owner = _owner;
         campaign.title = _title;
@@ -48,6 +48,8 @@ contract Crowdfunding {
 
     function donateToCampaign(uint256 _id) public payable{
         uint256 amount = msg.value;
+
+        require(_id < numberOfCampaigns, "Campaign does not exist");
 
         Campaign storage campaign = campaigns[_id];
 
@@ -75,5 +77,9 @@ contract Crowdfunding {
             allCampaigns[i] = item;   
         }
         return(allCampaigns);
+    }
+
+    function getCampaign(uint256 _id) public view returns(Campaign memory) {
+        return campaigns[_id];
     }
 }
