@@ -5,7 +5,7 @@ pragma solidity ^0.8.26;
 import {Test} from "forge-std/Test.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 import {Crowdfunding} from "src/Crowdfunding.sol";
-import {DeployScipt} from "script/Deploy.s.sol";
+import {DeployScript} from "script/Deploy.s.sol";
 
 contract CrowdfundingTest is Test{
     Crowdfunding crowdfunding;

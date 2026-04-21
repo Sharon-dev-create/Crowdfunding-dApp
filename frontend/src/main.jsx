@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { lineaSepolia } form "wagmi/chains";
+import { lineaSepolia } from "wagmi/chains";
 import App from "./App";
+import './index.css';
 
 // Create Wagmi config
 const config = createConfig({
@@ -17,12 +18,12 @@ const config = createConfig({
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
-cont queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 root.render(
     <React.StrictMode>
         <WagmiProvider config={config}>
-            <QueryClientProvider client={queryClient}>
+            <QueryclientProvider client={queryClient}>
                 <App />
                 </QueryclientProvider>
             </WagmiProvider>
