@@ -16,17 +16,18 @@ const config = createConfig({
     ),
   },
 });
-
+ 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 const queryClient = new QueryClient();
 
 root.render(
     <React.StrictMode>
         <WagmiProvider config={config}>
-            <QueryclientProvider client={queryClient}>
-                <App />
-                </QueryclientProvider>
-            </WagmiProvider>
-        </React.StrictMode>
-
-)
+            <QueryClientProvider client={queryClient}>
+                <Router>
+                    <App />
+                </Router>
+            </QueryClientProvider>
+        </WagmiProvider>
+    </React.StrictMode>
+)     

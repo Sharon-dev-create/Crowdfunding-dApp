@@ -1,6 +1,6 @@
-import React, { useState } from "react";ls 
-import { Link, useNavigate } from "react-router-dom";
-import { logo, sun } from "../assets";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { logo, sun } from "../src/assets";
 import { navlinks } from "../constants";
 
 const Icon = ({ styles, name, imageUrl, isActive, disabled, handleClick }) => (
@@ -28,7 +28,6 @@ const Icon = ({ styles, name, imageUrl, isActive, disabled, handleClick }) => (
 );
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const [isActive, setIsActive] = useState("dashboard");
   return (
     <div
