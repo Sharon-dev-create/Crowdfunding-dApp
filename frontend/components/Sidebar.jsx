@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { logo, sun } from "../src/assets";
 import { navlinks } from "../constants";
 
-const Icon = ({ styles, name, imageUrl, isActive, disabled, handleClick }) => (
+const Icon = ({ styles, name, imgUrl, isActive, disabled, handleClick }) => (
   <div
     className={`w-[48px] h-[48px] rounded-[10px] 
         ${isActive && isActive == name && "bg-[#2c2f32]"} ${!disabled && "cursor-pointer"} 
@@ -12,13 +12,13 @@ const Icon = ({ styles, name, imageUrl, isActive, disabled, handleClick }) => (
   >
     {!isActive ? (
       <img
-        src={imageUrl}
+        src={imgUrl}
         alt="fund_logo"
         className="w-1/2 h-1/2 object-contain"
       />
     ) : (
       <img
-        src={imageUrl}
+        src={imgUrl}
         alt="fund_logo"
         className={`w-1/2 h-1/2 object-contain 
                 ${isActive !== name && "grayscale"}`}
@@ -44,19 +44,23 @@ const Sidebar = () => {
         <div className="flex flex-col justify-center
         items-center gap-3">
           {navlinks.map((link) => (
-            <Icon
-            key={link.name}
-            {...link}
-            isActive={isActive}
-             handleClick={() => {
-              if(!link.disabled) {
-                setIsActive(link.name);
-                Navigate(link.link)
-              }
-            }}/>
+            <Link key={link.name} to={link.link}>
+              <Icon
+                {...link}
+                isActive={isActive}
+                handleClick={() => {
+                  if(!link.disabled) {
+                    setIsActive(link.name);
+                  }
+                }}
+              />
+            </Link>
            ))}
         </div>
 
+        <Icon styles="bg-[#1c1c24] shadow-secondary"
+        imgUrl={sun} />
+                       
       </div>
     </div>
   );
