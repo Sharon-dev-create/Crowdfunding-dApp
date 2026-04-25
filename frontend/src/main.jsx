@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { WagmiProvider, createConfig, http } from "wagmi";
+import { injected } from "wagmi/connectors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import { StateContextProvider } from '../context';
@@ -13,6 +14,7 @@ import './index.css';
 // Create Wagmi config
 const config = createConfig({
   chains: [lineaSepolia],
+  connectors: [injected()],
   transports: {
     [lineaSepolia.id]: http(
       "https://linea-sepolia.g.alchemy.com/v2/dzyHFOQkfxqPq99VT_o1nW85IcljZ7-_"

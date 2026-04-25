@@ -1,12 +1,14 @@
 import React, { useContext, createContext } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useWriteContract } from "wagmi";
 import { ethers } from "ethers";
 import { parseAbi } from "viem";
 
 const StateContext = createContext();
 
 export const StateContextProvider = ({ children }) => {
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
+    const { connectAsync, connectors, isPending: isConnecting } = useConnect();
+    const { disconnectAsync } = useDisconnect();
     
     // ABI fragment for createCampaign function
     const abi = parseAbi([
@@ -14,8 +16,26 @@ export const StateContextProvider = ({ children }) => {
     ]);
     const { writeContractAsync: createCampaignWrite } = useWriteContract();
 
+    const connect = async () => {
+        const injectedConnector =
+            connectors?.find((connector) => connector?.id === "injected") ??
+            connectors?.[0];
+
+        if (!injectedConnector) {
+            throw new Error("No wallet connector configured.");
+        }
+
+        await connectAsync({ connector: injectedConnector });
+    };
+
+    const disconnect = async () => {
+        await disconnectAsync();
+    };
+
     const publishCampaign = async (form) => {
         try {
+            if (!address) throw new Error("Wallet not connected.");
+
             const data = await createCampaignWrite({
                 address: "0x429b3B235FA8e532ed033AE9f50e62b05413F3c7",
                 abi,
@@ -39,7 +59,10 @@ export const StateContextProvider = ({ children }) => {
         <StateContext.Provider
             value={{
                 address,
-                contract,
+                isConnected,
+                isConnecting,
+                connect,
+                disconnect,
                 createCampaign: publishCampaign
             }}
             >

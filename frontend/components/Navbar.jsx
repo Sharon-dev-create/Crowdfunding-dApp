@@ -42,7 +42,7 @@ const Navbar = () => {
                 object-contain"
           />
         </div>
-      </div>
+	      </div>
 	      <div className="sm:flex hidden flex-row justify-end gap-4">
 	        <CustomButton
 	          btnType="button"
@@ -50,7 +50,7 @@ const Navbar = () => {
 	          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
 	          handleClick={() => {
 	            if (address) navigate("/create-campaign");
-	            else connect?.();
+	            else connect?.().catch((err) => console.error(err));
 	          }}
 	        />
 
@@ -70,28 +70,35 @@ const Navbar = () => {
       </div>
 
       {/** Small screen navigaion */}
-	      <div
-	        className="sm:hidden flex justify-between
-	             items-center relative"
-	      >
-        <div
-          className="w-[40px] h-[40px] rounded-[10px]
-                  bg-[#2c2f32] flex justify-center items-center cursor-pointer"
-        >
-          <img
-            src={profile}
-            alt="user"
-            className="w-[60%]
-                    h-[60%] object-contain"
-          />
-        </div>
-        <img
-          src={menu}
-          alt="menu"
-          className="w-[34px] h-[34px] object-contain
-                  cursor-pointer"
-          onClick={() => setToggleDrawer((prev) => !prev)}
-        />
+	      <div className="sm:hidden flex justify-between items-center relative">
+	        <Link to="/profile">
+	          <div className="w-[40px] h-[40px] rounded-[10px] bg-[#2c2f32] flex justify-center items-center cursor-pointer">
+	            <img
+	              src={profile}
+	              alt="user"
+	              className="w-[60%] h-[60%] object-contain"
+	            />
+	          </div>
+	        </Link>
+	
+	        <div className="flex items-center gap-2">
+	          <CustomButton
+	            btnType="button"
+	            title={address ? "Create" : "Connect"}
+	            styles={`${address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"} min-h-[40px] px-3 text-[14px] leading-[20px]`}
+	            handleClick={() => {
+	              if (address) navigate("/create-campaign");
+	              else connect?.().catch((err) => console.error(err));
+	            }}
+	          />
+	
+	          <img
+	            src={menu}
+	            alt="menu"
+	            className="w-[34px] h-[34px] object-contain cursor-pointer"
+	            onClick={() => setToggleDrawer((prev) => !prev)}
+	          />
+	        </div>
 	        <div
 	          className={`absolute top-[60px] right-0
 	                    left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 
@@ -136,7 +143,7 @@ const Navbar = () => {
 	          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
 	          handleClick={() => {
 	            if (address) navigate("/create-campaign");
-	            else connect?.();
+	            else connect?.().catch((err) => console.error(err));
 	          }}
 	        />
 	          </div>
