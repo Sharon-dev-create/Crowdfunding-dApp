@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+import { StateContextProvider } from '../context';
+
 import { lineaSepolia } from "wagmi/chains";
 import App from "./App";
 import './index.css';
@@ -25,7 +28,9 @@ root.render(
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
                 <Router>
-                    <App />
+                    <StateContextProvider>
+                        <App />
+                    </StateContextProvider>
                 </Router>
             </QueryClientProvider>
         </WagmiProvider>
