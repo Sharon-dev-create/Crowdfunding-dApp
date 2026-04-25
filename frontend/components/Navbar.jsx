@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logo, menu, search, profile } from "../src/assets";
+import { menu, search, profile } from "../src/assets";
 
 import { navlinks } from "../constants";
 import { CustomButton } from "./";
+import { useStateContext } from "../context";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState("dashboard");
   const [toggleDrawer, setToggleDrawer] = useState(false);
-
-  const address = "0x1234567890123456789012345678901234567890";
+ 
+  const { connect, address } = useStateContext();
 
   return (
     <div
-      className="flex md:flex-row 
+      className="flex md:flex-row
         flex-col-reverse justify-between mb-[35px]
         gap-6"
     >
@@ -42,16 +43,16 @@ const Navbar = () => {
           />
         </div>
       </div>
-      <div className="sm:flex hidden flex-row justify-end gap-4">
-        <CustomButton
-          btnType="button"
-          title={address ? "Create a campaign" : "Connect"}
-          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
-          handleClick={() => {
-            if (address) navigate("create-campaign");
-            else "connect()";
-          }}
-        />
+	      <div className="sm:flex hidden flex-row justify-end gap-4">
+	        <CustomButton
+	          btnType="button"
+	          title={address ? "Create a campaign" : "Connect"}
+	          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
+	          handleClick={() => {
+	            if (address) navigate("/create-campaign");
+	            else connect?.();
+	          }}
+	        />
 
         <Link to="/profile">
           <div
@@ -69,10 +70,10 @@ const Navbar = () => {
       </div>
 
       {/** Small screen navigaion */}
-      <div
-        className="sm:hidden fkex justify-between
-             items-center relative"
-      >
+	      <div
+	        className="sm:hidden flex justify-between
+	             items-center relative"
+	      >
         <div
           className="w-[40px] h-[40px] rounded-[10px]
                   bg-[#2c2f32] flex justify-center items-center cursor-pointer"
@@ -91,12 +92,12 @@ const Navbar = () => {
                   cursor-pointer"
           onClick={() => setToggleDrawer((prev) => !prev)}
         />
-        <div
-          className={`absolute top=[60px] right-0
-                    left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 
-                    ${!toggleDrawer ? 'translate-y-[100vh]'  : 
-                    'translate-y-0'} transition-all duration-700`}
-        >
+	        <div
+	          className={`absolute top-[60px] right-0
+	                    left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 
+	                    ${!toggleDrawer ? 'translate-y-[100vh]'  : 
+	                    'translate-y-0'} transition-all duration-700`}
+	        >
           <ul className="mb-4">
             {navlinks.map((link) => (
               <li
@@ -110,34 +111,37 @@ const Navbar = () => {
                   navigate(link.link);
                 }}
               >
-                <img
-                  src={link.imgUrl}
-                  alt={link.name}
-                  className={`w-[24px] h-[24px] object-contain
-                    ${isActive === link.name ? 'r=grayscale-0' :
-                        'grayscale'
-                    }`}
-                />
-                <p className="{`ml-[20px] font epilogue font-semibold text-[14px] 
-                ${isActive === link.name ? 'text-[#1dc071]' : 'text-[#808191]'} `}">
-                    {link.name}
-                </p>
-              </li>
-            ))}
+	                <img
+	                  src={link.imgUrl}
+	                  alt={link.name}
+	                  className={`w-[24px] h-[24px] object-contain
+	                    ${isActive === link.name ? 'grayscale-0' :
+	                        'grayscale'
+	                    }`}
+	                />
+	                <p
+	                  className={`ml-[20px] font-epilogue font-semibold text-[14px] ${
+	                    isActive === link.name ? "text-[#1dc071]" : "text-[#808191]"
+	                  }`}
+	                >
+	                    {link.name}
+	                </p>
+	              </li>
+	            ))}
           </ul>
           <div className="flex mx-4">
-            <CustomButton
-          btnType="button"
-          title={address ? "Create a campaign" : "Connect"}
-          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
-          handleClick={() => {
-            if (address) navigate("create-campaign");
-            else "connect()";
-          }}
-        />
-          </div>
-        </div>
-      </div>
+	            <CustomButton
+	          btnType="button"
+	          title={address ? "Create a campaign" : "Connect"}
+	          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
+	          handleClick={() => {
+	            if (address) navigate("/create-campaign");
+	            else connect?.();
+	          }}
+	        />
+	          </div>
+	        </div>
+	      </div>
     </div>
   );
 };

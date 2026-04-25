@@ -39,6 +39,7 @@ export const StateContextProvider = ({ children }) => {
         <StateContext.Provider
             value={{
                 address,
+                contract,
                 createCampaign: publishCampaign
             }}
             >
