@@ -39,7 +39,7 @@ export const StateContextProvider = ({ children }) => {
             const data = await createCampaignWrite({
                 address: "0x429b3B235FA8e532ed033AE9f50e62b05413F3c7",
                 abi,
-                functionName: "createCampaign",
+                functionName: "createCampaign"
                 args: [
                     address, //owner
                     form.description, //description
