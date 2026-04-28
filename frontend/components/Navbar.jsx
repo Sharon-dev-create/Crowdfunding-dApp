@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { menu, search, profile } from "../src/assets";
+import { menu, search, profile, logo } from "../src/assets";
 
 import { navlinks } from "../constants";
 import { CustomButton } from "./";
@@ -10,8 +10,33 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState("dashboard");
   const [toggleDrawer, setToggleDrawer] = useState(false);
+  const { connect, disconnect, address, isConnected, isConnecting } =
+    useStateContext();
+  const walletConnected = Boolean(address && isConnected);
 
-  const { connect, address } = useStateContext();
+  const connectLabel = walletConnected
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : isConnecting
+      ? "Connecting..."
+      : "Connect";
+
+  const handleConnectToggle = async () => {
+    try {
+      if (walletConnected) await disconnect?.();
+      else await connect?.();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCreateCampaign = async () => {
+    try {
+      if (!walletConnected) await connect?.();
+      navigate("/create-campaign");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div
@@ -46,12 +71,15 @@ const Navbar = () => {
       <div className="sm:flex hidden flex-row justify-end gap-4">
         <CustomButton
           btnType="button"
-          title={address ? "Create a campaign" : "Connect"}
-          styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
-          handleClick={() => {
-            if (address) navigate("/create-campaign");
-            else "connect()";
-          }}
+          title={connectLabel}
+          styles={walletConnected ? "bg-[#2c2f32]" : "bg-[#8c6dfd]"}
+          handleClick={handleConnectToggle}
+        />
+        <CustomButton
+          btnType="button"
+          title="Create a campaign"
+          styles={walletConnected ? "bg-[#1dc071]" : "bg-[#1dc071] opacity-80"}
+          handleClick={handleCreateCampaign}
         />
 
         <Link to="/profile">
@@ -74,7 +102,7 @@ const Navbar = () => {
         <Link to="/profile">
           <div className="w-[40px] h-[40px] rounded-[10px] bg-[#2c2f32] flex justify-center items-center cursor-pointer">
             <img
-              src={profile}
+              src={logo}
               alt="user"
               className="w-[60%] h-[60%] object-contain"
             />
@@ -84,12 +112,15 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <CustomButton
             btnType="button"
-            title={address ? "Create" : "Connect"}
-            styles={`${address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"} min-h-[40px] px-3 text-[14px] leading-[20px]`}
-            handleClick={() => {
-              if (address) navigate("/create-campaign");
-              else connect?.().catch((err) => console.error(err));
-            }}
+            title={connectLabel}
+            styles={`${walletConnected ? "bg-[#2c2f32]" : "bg-[#8c6dfd]"} min-h-[40px] px-3 text-[14px] leading-[20px]`}
+            handleClick={handleConnectToggle}
+          />
+          <CustomButton
+            btnType="button"
+            title="Create"
+            styles={`${walletConnected ? "bg-[#1dc071]" : "bg-[#1dc071] opacity-80"} min-h-[40px] px-3 text-[14px] leading-[20px]`}
+            handleClick={handleCreateCampaign}
           />
 
           <img
@@ -135,15 +166,18 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <div className="flex mx-4">
+          <div className="flex mx-4 gap-3">
             <CustomButton
               btnType="button"
-              title={address ? "Create a campaign" : "Connect"}
-              styles={address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
-              handleClick={() => {
-                if (address) navigate("/create-campaign");
-                else connect?.().catch((err) => console.error(err));
-              }}
+              title={connectLabel}
+              styles={walletConnected ? "bg-[#2c2f32]" : "bg-[#8c6dfd]"}
+              handleClick={handleConnectToggle}
+            />
+            <CustomButton
+              btnType="button"
+              title="Create a campaign"
+              styles={walletConnected ? "bg-[#1dc071]" : "bg-[#1dc071] opacity-80"}
+              handleClick={handleCreateCampaign}
             />
           </div>
         </div>

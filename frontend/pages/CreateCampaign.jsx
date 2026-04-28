@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CustomButton, FormField } from "../components";
 
-import {useStateContext } from "../context";
+import { useStateContext } from "../context";
 import { money } from "../src/assets";
 import { checkIfImage } from "../utils";
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const {createCampaign} = useStateContext(); 
+  const { address, isConnected, connect, isConnecting, createCampaign } =
+    useStateContext();
   const [form, setForm] = useState({
     name: "",
     title: "",
@@ -45,6 +46,27 @@ const CreateCampaign = () => {
 
     console.log(form);
   };
+
+  if (!address || !isConnected) {
+    return (
+      <div className="bg-[#1c1c24] flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4">
+        <div className="flex justify-center items-center p-[16px] sm:min-w-[380px] bg-[#3a3a43] rounded-[10px]">
+          <h1 className="font-epilogue font-bold sm:text-[25px] text-[18px] leading-[35px] text-white">
+            Connect your wallet to create a campaign
+          </h1>
+        </div>
+        <div className="mt-8">
+          <CustomButton
+            btnType="button"
+            title={isConnecting ? "Connecting..." : "Connect MetaMask"}
+            styles="bg-[#8c6dfd]"
+            handleClick={() => connect?.().catch((err) => console.error(err))}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="bg-[#1c1c24] flex justify-center
