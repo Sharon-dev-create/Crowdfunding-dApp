@@ -73,7 +73,7 @@ const Navbar = () => {
           btnType="button"
           title={connectLabel}
           styles={walletConnected ? "bg-[#2c2f32]" : "bg-[#8c6dfd]"}
-          handleClick={handleConnectToggle}
+          handleClick={handleConnectToggle} 
         />
         <CustomButton
           btnType="button"
