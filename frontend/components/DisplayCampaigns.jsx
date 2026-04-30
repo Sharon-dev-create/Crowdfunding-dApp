@@ -1,11 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { loader } from '../assets';
-import { useStateContext } from '../context';
+import FundCard from './FundCard';
+import { loader } from '../src/assets';
 
 const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
         const navigate = useNavigate();
+
+        const handleNavigate = (campaign) => {
+            navigate(`/campaign-details/${campaign.title}`, { state: campaign });
+        }
         return (
             <div>
                 <h1 className="font-epilogue font-semibold text-[18px]
@@ -17,12 +21,21 @@ const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
                      h-[100px] object-contain" />
                 )  }
 
-                {!loading && campaign.length === 0 && (
+                {!isLoading && campaigns.length === 0 && (
                     <p className="font-epilogue font-semibold text-[14px]
                     leading-[30px] text-[#818183]">
                         You have not created any campaigns yet.
                     </p>
                 )}
+
+                {!isLoading && campaigns.length > 0 && campaigns.map
+                ((campaign) => (
+                    <FundCard
+                        key={campaign.pId}
+                        {...campaign}
+                        handleClick={() => handleNavigate(campaign)}
+                    />
+                ))}
             </div>
             </div>
         )
