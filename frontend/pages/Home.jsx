@@ -18,7 +18,11 @@ const Home = () => {
     }, [address, contract]);
 
     return (
-        <div>Home</div>
+        <DisplayCampaigns
+            title="All Campaigns"
+            isLoading={isLoading}
+            campaigns={campaigns}
+        />
     )
 }
 
