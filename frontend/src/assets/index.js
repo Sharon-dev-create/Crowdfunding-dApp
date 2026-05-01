@@ -10,4 +10,5 @@ export { default as profile } from './profile.svg';
 export { default as search } from './search.svg';
 export { default as sun } from './sun.svg';
 export { default as type } from './type.svg';
+export { default as tagType } from './type.svg';
 export { default as withdraw } from './withdraw.svg';

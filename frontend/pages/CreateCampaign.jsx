@@ -27,24 +27,22 @@ const CreateCampaign = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    checkIfImage(form.image, async (exists) => {
-      if (exists) {
-        setIsLoading(true);
-        try {
-          // `createCampaign` handles parsing `target` for the installed ethers version.
-          await createCampaign(form);
-          navigate("/");
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        alert('Provide valid image URL');
-        setForm({ ...form, image: "" }); 
+    checkIfImage(form.image, (exists) => {
+      if (!exists) {
+        alert("Provide valid image URL");
+        setForm({ ...form, image: "" });
+        return;
       }
-    })
 
-
-    console.log(form);
+      setIsLoading(true);
+      createCampaign(form)
+        .then(() => navigate("/"))
+        .catch((err) => {
+          console.error(err);
+          alert(err?.shortMessage ?? err?.message ?? "Failed to create campaign");
+        })
+        .finally(() => setIsLoading(false));
+    });
   };
 
   if (!address || !isConnected) {
@@ -133,11 +131,13 @@ const CreateCampaign = () => {
 
         <div className="flex flex-wrap gap-[40px]">
           <FormField
-            labelName="Goal"
-            placeholder="ETH 0.50"
-            inputType="text"
+            labelName="Goal (ETH)"
+            placeholder="0.50"
+            inputType="number"
             value={form.target}
             handleChange={(e) => handleformFieldChange("target", e)}
+            min="0"
+            step="any"
           />
           <FormField
             labelName="End Date "

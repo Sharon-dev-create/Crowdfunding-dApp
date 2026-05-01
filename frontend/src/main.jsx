@@ -7,17 +7,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import { StateContextProvider } from '../context';
 
-import { lineaSepolia } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import App from "./App";
 import './index.css';
 
 // Create Wagmi config
 const config = createConfig({
-  chains: [lineaSepolia],
+  chains: [sepolia],
   connectors: [injected()],
   transports: {
-    [lineaSepolia.id]: http(
-      "https://linea-sepolia.g.alchemy.com/v2/dzyHFOQkfxqPq99VT_o1nW85IcljZ7-_"
+    [sepolia.id]: http(
+      import.meta.env?.VITE_RPC_URL ??
+        "https://eth-sepolia.g.alchemy.com/v2/dzyHFOQkfxqPq99VT_o1nW85IcljZ7-_",
     ),
   },
 });

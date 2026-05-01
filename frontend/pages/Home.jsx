@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import { DisplayCampaigns } from '../components'; 
 import { useStateContext } from '../context';
@@ -7,16 +7,21 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [campaigns, setCampaigns] = useState([]);
 
-    const { address, contract, getCampaigns } = useStateContext();
+    const { getCampaigns } = useStateContext();
 
-    const fetchCampaigns = async () => {
-       setIsLoading(true);
-       const data = await getCampaigns();
-    }
+    const fetchCampaigns = useCallback(async () => {
+      setIsLoading(true);
+      try {
+        const data = await getCampaigns();
+        setCampaigns(data);
+      } finally {
+        setIsLoading(false);
+      }
+    }, [getCampaigns]);
 
     useEffect(() => {
-       if(contract) getCampaigns();
-    }, [address, contract]);
+      fetchCampaigns().catch((err) => console.error(err));
+    }, [fetchCampaigns]);
 
     return (
         <DisplayCampaigns
