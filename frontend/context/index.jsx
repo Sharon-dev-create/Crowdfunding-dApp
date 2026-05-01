@@ -115,6 +115,15 @@ export const StateContextProvider = ({ children }) => {
     [address, contractAddress, createCampaignWrite, publicClient],
   );
 
+  const getUserCampaigns = async () => {
+    const allCampaigns = await getCampaigns();
+
+    const filteredCampaigns = allCampaigns.filter((campaign) => 
+    campaign.owner === address);
+
+    return filteredCampaigns;
+  }
+
   const getCampaigns = useCallback(async () => {
     if (!publicClient) throw new Error("RPC client not ready.");
 
@@ -156,6 +165,7 @@ export const StateContextProvider = ({ children }) => {
       contractAddress,
       createCampaign,
       getCampaigns,
+      getUserCampaigns,
     }),
     [
       address,
