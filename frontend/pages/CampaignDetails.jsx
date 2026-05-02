@@ -67,23 +67,13 @@ const CampaignDetails = () => {
                 </div>
                 <div>
                      <h4 className="font-epiliogue font-semibold text-[18px]
-                     text-white p-3 uppercase">Creator</h4> 
-
-                     <div className="mt=[20px] flex flex-row items-center
-                     flex-wrap gap-[14px]">
-                       <div className="w-[52px] h-[52px] flex
-                       items-center justify-center rounded-full bg-[#2c2f32]
-                       cursor-[pinter">
-                        <img src={profile} alt="user" className="w-[60%]
-                        h-[60%] object-contain"/>
-                       </div>
-                       <div>
-                        <h4 className="font-epilogue font-semibold text-[14px]
-                        text-white break-all">{state.owner}</h4>
-                        <p className="mt-[4px] font-epilogue font-normal
-                        text-[12px] text-[#808191]"> 10 Campaigns</p>
-                       </div>
+                     text-white p-3 uppercase">Story</h4> 
+                     <div className="mt-[20px]">
+                      <p className="mt-[4px] font-epilogue font-normal
+                        text-[16px] text-[#808191] leading-[26px] text-justify
+                        ">{state.description}</p>
                      </div>
+                     
                     </div>
 
 
