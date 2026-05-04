@@ -133,7 +133,17 @@ const CampaignDetails = () => {
             Fund
           </h4>
           <div className="mt-[20px] flex flex-col p-4 bg-[#1c1c24] rounded-[10px]">
-
+            <p className="font-epilogue font-medium text-[20px] leading-[30px]
+            text-center text-[#808191]">
+              Fund the campaign
+            </p>
+            <div className="mt-[30px]">
+              <input type="number"
+               placeholder="ETH 0.1"
+              step="0.01"
+              className="w-full py-[10px] sm:px-[20px] px-[15px]
+              outline-none border-[1px] border-[#3a3a43] "/>
+            </div>
           </div>
         </div>
       </div>
