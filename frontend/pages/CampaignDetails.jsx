@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ethers } from "ethers";
 
+import { useStateContext } from "../context";
 import { CountBox } from "../components";
 import { calculateBarPercentage, daysLeft } from "../utils";
 import { profile } from "../assets";
 
 const CampaignDetails = () => {
   const { state } = useLocation();
-
+  const { getDonations, contract, address } = useStateContext;
+  
   const [isLoading, setLoading] = useState(false);
+  const [amount, setAmount] = useState('');
   const [donators, setDonators] = useState([]);
 
   const remainingDays = daysLeft(state.deadline);
