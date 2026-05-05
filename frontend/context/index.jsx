@@ -115,7 +115,29 @@ export const StateContextProvider = ({ children }) => {
     [address, contractAddress, createCampaignWrite, publicClient],
   );
 
-  
+  const donate = async(pId, amount) => {
+    const data =await contract.call('donateToCampaign', pId, address,
+      amount
+    );
+
+    return data;
+  }
+
+  const getDonations = async (pId) => {
+    const donations = await contract.all('getDonators', pId);
+    const numberOfDonations = donations[0].length;
+
+    const parseDonations =[];
+
+    for ( let i = 0; i < numberOfDonations; i++) {
+      parseDonations.push({
+        donator:donations[0][i],
+        donation: ethers.utils.formatEther(donations[1][i].toString)
+      })
+    }
+
+    return parseDonations;
+  }
 
   const getUserCampaigns = async () => {
     const allCampaigns = await getCampaigns();
@@ -168,6 +190,8 @@ export const StateContextProvider = ({ children }) => {
       createCampaign,
       getCampaigns,
       getUserCampaigns,
+      donate,
+      getDonations
     }),
     [
       address,
