@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { ethers } from "ethers";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 import { useStateContext } from "../context";
 import { CountBox } from "../components";
@@ -9,18 +8,58 @@ import { profile } from "../assets";
 import { CustomButton } from "../components";
 
 const CampaignDetails = () => {
+  const params = useParams();
   const { state } = useLocation();
-  const { getDonations, contract, address } = useStateContext;
+  const { donate, getDonations, getCampaign } = useStateContext();
+  const campaignId = state?.pId ?? params?.id;
   
-  const [isLoading, setLoading] = useState(false);
-  const [amount, setAmount] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [amount, setAmount] = useState("");
   const [donators, setDonators] = useState([]);
+  const [campaign, setCampaign] = useState(state ?? null);
 
-  const remainingDays = daysLeft(state.deadline);
+  const remainingDays = campaign?.deadline ? daysLeft(campaign.deadline) : 0;
 
-  const handleDonate = async () => {
-
+  const fetchCampaign = async () => {
+    if (campaignId === undefined || campaignId === null) return;
+    const latest = await getCampaign(campaignId);
+    setCampaign(latest);
   };
+
+  const fetchDonators = async () => {
+    if (campaignId === undefined || campaignId === null) return;
+    const data = await getDonations(campaignId);
+    setDonators(data);
+  };
+  
+  useEffect(() => {
+    fetchCampaign().catch((err) => console.error(err));
+    fetchDonators().catch((err) => console.error(err));
+  }, [campaignId, getCampaign, getDonations]);
+  
+  const handleDonate = async () => {
+    if (campaignId === undefined || campaignId === null) return;
+    if (!amount || Number(amount) <= 0) {
+      alert("Enter an amount greater than 0.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await donate(campaignId, amount);
+      setAmount("");
+      await Promise.all([fetchCampaign(), fetchDonators()]);
+    } catch (err) {
+      console.error(err);
+      alert(err?.shortMessage ?? err?.message ?? "Failed to donate.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!campaign) {
+    return <div className="text-white">Loading...</div>;
+  }
 
   return (
     <div>
@@ -30,7 +69,7 @@ const CampaignDetails = () => {
       >
         <div className="flex-1 flex flex-col">
           <img
-            src={state.image}
+            src={campaign.image}
             alt="campaign"
             className="w-full h-[410px] object-cover rounded-xl"
           />
@@ -41,8 +80,8 @@ const CampaignDetails = () => {
               className="absolute h-full bg-[#4acd8d]"
               style={{
                 width: `${calculateBarPercentage(
-                  state.target,
-                  state.amountCollected,
+                  campaign.target,
+                  campaign.amountCollected,
                 )}%`,
                 maxWidth: "100%",
               }}
@@ -54,8 +93,8 @@ const CampaignDetails = () => {
         >
           <CountBox title="Days Left" value={remainingDays} />
           <CountBox
-            title={`Raised of ${state.target}`}
-            value={state.amountCollected}
+            title={`Raised of ${campaign.target}`}
+            value={campaign.amountCollected}
           />
           <CountBox title="Total Backers" value={donators.length} />
         </div>
@@ -85,9 +124,9 @@ const CampaignDetails = () => {
               </div>
               <div>
                 <h4
-                  className="font-epilogue font-semibold text-[14px] text-white break-all"
+                className="font-epilogue font-semibold text-[14px] text-white break-all"
                 >
-                  {state.owner}
+                  {campaign.owner}
                 </h4>
                 <p
                   className="mt-[4px] font-epilogue font-normal text-[12px] text-[#808191]"
@@ -109,7 +148,7 @@ const CampaignDetails = () => {
             <p
               className="mt-[4px] font-epilogue font-normal text-[16px] text-[#808191] leading-[26px] text-justify"
             >
-              {state.description}
+              {campaign.description}
             </p>
           </div>
         </div>

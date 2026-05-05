@@ -36,7 +36,7 @@ export const StateContextProvider = ({ children }) => {
   const { connectAsync, connectors, isPending: isConnecting } = useConnect();
   const { disconnectAsync } = useDisconnect();
   const publicClient = usePublicClient();
-  const { writeContractAsync: createCampaignWrite } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
 
   const contractAddress =
     import.meta.env?.VITE_CROWDFUNDING_ADDRESS ??
@@ -95,7 +95,7 @@ export const StateContextProvider = ({ children }) => {
         throw new Error(`Invalid goal amount: ${message}`);
       }
 
-      const hash = await createCampaignWrite({
+      const hash = await writeContractAsync({
         address: contractAddress,
         abi: crowdfundingAbi,
         functionName: "createCampaign",
@@ -112,41 +112,90 @@ export const StateContextProvider = ({ children }) => {
       await publicClient.waitForTransactionReceipt({ hash });
       return hash;
     },
-    [address, contractAddress, createCampaignWrite, publicClient],
+    [address, contractAddress, publicClient, writeContractAsync],
   );
 
-  const donate = async(pId, amount) => {
-    const data =await contract.call('donateToCampaign', pId, address,
-      amount
-    );
+  const donate = useCallback(
+    async (pId, amount) => {
+      if (!address) throw new Error("Wallet not connected.");
+      if (!publicClient) throw new Error("RPC client not ready.");
 
-    return data;
-  }
+      const id = typeof pId === "bigint" ? pId : BigInt(pId);
+      let value;
+      try {
+        value = ethers.parseEther(normalizeEtherAmount(amount));
+      } catch (err) {
+        const message = err?.shortMessage ?? err?.message ?? String(err);
+        throw new Error(`Invalid donation amount: ${message}`);
+      }
 
-  const getDonations = async (pId) => {
-    const donations = await contract.all('getDonators', pId);
-    const numberOfDonations = donations[0].length;
+      const hash = await writeContractAsync({
+        address: contractAddress,
+        abi: crowdfundingAbi,
+        functionName: "donateToCampaign",
+        args: [id],
+        value,
+      });
 
-    const parseDonations =[];
+      await publicClient.waitForTransactionReceipt({ hash });
+      return hash;
+    },
+    [address, contractAddress, publicClient, writeContractAsync],
+  );
 
-    for ( let i = 0; i < numberOfDonations; i++) {
-      parseDonations.push({
-        donator:donations[0][i],
-        donation: ethers.utils.formatEther(donations[1][i].toString)
-      })
-    }
+  const getDonations = useCallback(
+    async (pId) => {
+      if (!publicClient) throw new Error("RPC client not ready.");
+      const id = typeof pId === "bigint" ? pId : BigInt(pId);
 
-    return parseDonations;
-  }
+      const [donators, donations] = await publicClient.readContract({
+        address: contractAddress,
+        abi: crowdfundingAbi,
+        functionName: "getDonators",
+        args: [id],
+      });
 
-  const getUserCampaigns = async () => {
-    const allCampaigns = await getCampaigns();
+      return donators.map((donator, i) => ({
+        donator,
+        donation: ethers.formatEther(donations[i]),
+      }));
+    },
+    [contractAddress, publicClient],
+  );
 
-    const filteredCampaigns = allCampaigns.filter((campaign) => 
-    campaign.owner === address);
+  const getCampaign = useCallback(
+    async (pId) => {
+      if (!publicClient) throw new Error("RPC client not ready.");
+      const id = typeof pId === "bigint" ? pId : BigInt(pId);
 
-    return filteredCampaigns;
-  }
+      const campaign = await publicClient.readContract({
+        address: contractAddress,
+        abi: crowdfundingAbi,
+        functionName: "getCampaign",
+        args: [id],
+      });
+
+      const owner = campaign.owner ?? campaign?.[0];
+      const title = campaign.title ?? campaign?.[1];
+      const description = campaign.description ?? campaign?.[2];
+      const target = campaign.target ?? campaign?.[3];
+      const deadline = campaign.deadline ?? campaign?.[4];
+      const amountCollected = campaign.amountCollected ?? campaign?.[5];
+      const image = campaign.image ?? campaign?.[6];
+
+      return {
+        owner,
+        title,
+        description,
+        target: ethers.formatEther(target),
+        deadline: Number(deadline),
+        amountCollected: ethers.formatEther(amountCollected),
+        image,
+        pId: Number(id),
+      };
+    },
+    [contractAddress, publicClient],
+  );
 
   const getCampaigns = useCallback(async () => {
     if (!publicClient) throw new Error("RPC client not ready.");
@@ -179,6 +228,11 @@ export const StateContextProvider = ({ children }) => {
     });
   }, [contractAddress, publicClient]);
 
+  const getUserCampaigns = useCallback(async () => {
+    const allCampaigns = await getCampaigns();
+    return allCampaigns.filter((campaign) => campaign.owner === address);
+  }, [address, getCampaigns]);
+
   const value = useMemo(
     () => ({
       address,
@@ -188,10 +242,11 @@ export const StateContextProvider = ({ children }) => {
       disconnect,
       contractAddress,
       createCampaign,
+      getCampaign,
       getCampaigns,
       getUserCampaigns,
       donate,
-      getDonations
+      getDonations,
     }),
     [
       address,
@@ -199,7 +254,11 @@ export const StateContextProvider = ({ children }) => {
       contractAddress,
       createCampaign,
       disconnect,
+      donate,
+      getCampaign,
       getCampaigns,
+      getDonations,
+      getUserCampaigns,
       isConnected,
       isConnecting,
     ],
