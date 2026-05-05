@@ -155,17 +155,26 @@ const CampaignDetails = () => {
 
         <div>
           <h4
-            className="font-epilogue font-semibold text-[18px] text-white p-3 uppercase"
+            className="font-epilogue font-semibold text-[18px] 
+            text-white p-3 uppercase"
           >
             Donators
           </h4>
           <div className="mt-[20px] flex flex-col gap-4">
             {donators.length > 0 ? donators.map((item, index) => (
-              <div>
-                DONATOR
+              <div key={`${item.donator}-${index}`}
+              className="fle justify-between items-center
+              gap-4">
+                <p className="font-epilogue font-normal 
+                text-[16px] text-[#b2b3bd] leading-[26px]
+                break-11">{index + 1}.{item.donator}</p>
+                <p className="font-epilogue font-normal 
+                text-[16px] text-[#808191] leading-[26px]
+                break-11">{item.donation}</p>
                 </div>
             )) : (
-              <p className="font-epilogue font-normal text-[16px] text-[#808191]">
+              <p className="font-epilogue font-normal text-[16px]
+               text-[#808191] leading-[26px] text-justify">
                 No donators yet. Be the first one!
               </p>
             )}
