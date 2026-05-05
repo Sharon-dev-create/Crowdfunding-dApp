@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 import { useStateContext } from "../context";
 import { CountBox, Loader } from "../components";
@@ -12,6 +12,7 @@ const CampaignDetails = () => {
   const { state } = useLocation();
   const { donate, getDonations, getCampaign } = useStateContext();
   const campaignId = state?.pId ?? params?.id;
+  const navigate = useNavigate();
   
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState("");
@@ -49,6 +50,8 @@ const CampaignDetails = () => {
       await donate(campaignId, amount);
       setAmount("");
       await Promise.all([fetchCampaign(), fetchDonators()]);
+
+      navigate("/"); // Redirect to home after successful donation
     } catch (err) {
       console.error(err);
       alert(err?.shortMessage ?? err?.message ?? "Failed to donate.");
