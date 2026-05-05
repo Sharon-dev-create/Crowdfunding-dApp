@@ -115,6 +115,8 @@ export const StateContextProvider = ({ children }) => {
     [address, contractAddress, createCampaignWrite, publicClient],
   );
 
+  
+
   const getUserCampaigns = async () => {
     const allCampaigns = await getCampaigns();
 
