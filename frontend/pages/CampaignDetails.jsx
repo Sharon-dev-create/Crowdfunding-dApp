@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 
 import { useStateContext } from "../context";
-import { CountBox } from "../components";
+import { CountBox, Loader } from "../components";
 import { calculateBarPercentage, daysLeft } from "../utils";
 import { profile } from "../assets";
 import { CustomButton } from "../components";
@@ -63,7 +63,7 @@ const CampaignDetails = () => {
 
   return (
     <div>
-      {isLoading && "Loading..."}
+      {isLoading && <Loader/>}
       <div
         className="w-full flex md:flex-row flex-col mt-10 gap-[30px]"
       >
