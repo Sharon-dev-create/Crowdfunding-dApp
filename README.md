@@ -120,6 +120,26 @@ In another terminal:
 forge script script/Deploy.s.sol:DeployScript --fork-url http://127.0.0.1:8545 --broadcast
 ```
 
+### Deploy to Sepolia / testnet
+
+Set your Sepolia RPC endpoint and wallet private key in environment variables. Example:
+
+```bash
+export SEPOLIA_RPC_URL="https://sepolia.infura.io/v3/<your-infura-api-key>"
+export PRIVATE_KEY="0xyourwalletprivatekey"
+```
+
+Then deploy with Foundry:
+
+```bash
+forge script script/Deploy.s.sol:DeployScript \
+  --rpc-url "$SEPOLIA_RPC_URL" \
+  --private-key "$PRIVATE_KEY" \
+  --broadcast
+```
+
+After the script completes, copy the deployed contract address from the deployment output or from the generated `broadcast/Deploy.s.sol/<chain-id>/run-latest.json` file.
+
 ### Run the React app
 
 From `frontend/`:
